@@ -31,7 +31,7 @@ export default function Home() {
         <Achievements />
         <Projects />
         <GithubStats />
-        <LeetcodeStats />
+        {/* <LeetcodeStats /> */}
         <Contact />
       </main>
     </>

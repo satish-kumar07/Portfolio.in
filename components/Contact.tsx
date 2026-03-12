@@ -160,8 +160,8 @@ export default function Contact() {
               className="relative z-10 flex flex-col gap-6"
             >
               {/* Web3Forms Access Key */}
-              <input type="hidden" name="access_key" value="00fc6e57-0de2-4464-8a4d-c3cf8e0fadc0" />
-
+              <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY} />
+              
               <div className="flex flex-col gap-2">
                 <label className="font-orbitron text-xs tracking-widest text-neon-cyan uppercase">Name</label>
                 <input
