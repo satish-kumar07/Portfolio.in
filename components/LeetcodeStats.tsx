@@ -20,8 +20,10 @@ function CountUp({ to, duration = 2 }: { to: number, duration?: number }) {
 
 export default function LeetcodeStats() {
   const username = "PRAJAPATI_007";
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const [solvedData, setSolvedData] = useState<any>(null);
   const [calendarData, setCalendarData] = useState<any>(null);
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const [yearSelected, setYearSelected] = useState<string>("Current");
 

@@ -8,7 +8,7 @@ import TechStack from "@/components/TechStack";
 import Achievements from "@/components/Achievements";
 import Projects from "@/components/Projects";
 import GithubStats from "@/components/GithubStats";
-import LeetcodeStats from "@/components/LeetcodeStats";
+// import LeetcodeStats from "@/components/LeetcodeStats";
 import Contact from "@/components/Contact";
 
 export default function Home() {

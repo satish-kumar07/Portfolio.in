@@ -41,6 +41,7 @@ const projects = [
   }
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ProjectCard = ({ project, idx }: { project: any; idx: number }) => {
   const ref = useRef<HTMLDivElement>(null);
 
