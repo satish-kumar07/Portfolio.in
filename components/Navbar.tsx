@@ -8,7 +8,6 @@ const navItems = [
   { name: "Achievements", href: "#achievements" },
   { name: "Projects", href: "#projects" },
   { name: "Github", href: "#stats" },
-  { name: "Resume", href: "/resume" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -36,6 +35,13 @@ export default function Navbar() {
               </span>
             </Link>
           ))}
+
+          {/* Resume — highlighted separately */}
+          <Link href="/resume">
+            <span className="text-xs lg:text-sm font-orbitron tracking-widest text-neon-purple border border-neon-purple/50 px-3 py-1 rounded-full hover:bg-neon-purple hover:text-white hover:shadow-[0_0_12px_rgba(191,0,255,0.5)] transition-all duration-300 uppercase cursor-pointer">
+              Resume
+            </span>
+          </Link>
         </div>
 
         <div className="hidden md:block ml-auto">
