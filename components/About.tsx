@@ -33,7 +33,7 @@ const about = [
     My drive lies in turning complex, abstract concepts into tangible, high-performance applications. Whether it&apos;s architecting AI-powered platforms featuring real-time face recognition or integrating robust IoT networks, I thrive on building systems that bridge the gap between cutting-edge algorithms and seamless user experiences.
   </>,
   <>
-    When I&apos;m not architecting new projects, you&apos;ll find me optimizing code through rigorous <span className="text-neon-purple font-semibold">Data Structures & Algorithms</span> practice. I believe that writing highly efficient, elegantly maintainable code is the true core of engineering intelligent solutions that leave a lasting impact.
+    When I&apos;m not architecting new projects, you&apos;ll find me optimizing code through rigorous Data Structures & Algorithms practice. I believe that writing highly efficient, elegantly maintainable code is the true core of engineering intelligent solutions that leave a lasting impact.
   </>
 ];
 
