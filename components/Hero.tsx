@@ -1,7 +1,23 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function Hero() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 25, stiffness: 150 };
+  const glowX = useSpring(mouseX, springConfig);
+  const glowY = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
   const handleDownload = () => {
     // without navigating to a new tab or rendering the PDF in-browser.
     const link = document.createElement("a");
@@ -14,6 +30,25 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Dynamic Cursor Glow for Hero */}
+      <motion.div 
+        className="absolute pointer-events-none z-0 w-[600px] h-[600px] bg-neon-cyan/5 rounded-full blur-[120px]"
+        style={{
+          x: glowX,
+          y: glowY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+      />
+      <motion.div 
+        className="absolute pointer-events-none z-0 w-[400px] h-[400px] bg-neon-purple/5 rounded-full blur-[100px]"
+        style={{
+          x: glowX,
+          y: glowY,
+          translateX: "-70%",
+          translateY: "-30%",
+        }}
+      />
       <div className="relative z-10 px-4 max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center justify-between gap-16 lg:gap-24 w-full">
         {/* Left Side: Information */}
         <div className="flex-1 text-center lg:text-left flex flex-col items-center lg:items-start max-w-3xl">

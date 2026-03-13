@@ -100,17 +100,29 @@ export default function Contact() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto text-left mb-24">
           {/* Left Column: Contact Cards */}
-          <div className="flex flex-col gap-6">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            className="flex flex-col gap-6"
+          >
             {links.map((link, idx) => (
               <MagneticWrapper key={idx}>
                 <motion.a
                   href={link.href}
                   target="_blank"
                   rel="noreferrer"
-                  initial={{ opacity: 0, x: -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  viewport={{ once: true }}
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
+                  }}
                   className="group flex items-center gap-4 p-5 bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 relative overflow-hidden h-full"
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = link.color;
@@ -121,6 +133,9 @@ export default function Contact() {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
+                  {/* Holographic Glare Effect */}
+                  <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+
                   {/* Hover gradient background effect */}
                   <div
                     className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none"
@@ -128,13 +143,13 @@ export default function Contact() {
                   />
 
                   <div
-                    className="p-3 rounded-lg bg-black/50 border border-white/5 transition-colors duration-300"
+                    className="p-3 rounded-lg bg-black/50 border border-white/5 transition-colors duration-300 relative z-10"
                     style={{ color: link.color }}
                   >
                     {link.icon}
                   </div>
-                  <div>
-                    <h3 className="font-orbitron font-bold text-gray-200 tracking-wider text-lg">{link.label}</h3>
+                  <div className="relative z-10">
+                    <h3 className="font-orbitron font-bold text-gray-200 tracking-wider text-lg group-hover:text-white transition-colors">{link.label}</h3>
                     <p className="text-sm font-inter text-gray-400 truncate mt-1">
                       {link.label === "Email Me" ? "prajapatisatishkumar792@gmail.com" : "Connect with me"}
                     </p>
@@ -142,7 +157,7 @@ export default function Contact() {
                 </motion.a>
               </MagneticWrapper>
             ))}
-          </div>
+          </motion.div>
 
           {/* Right Column: Contact Form */}
           <motion.div

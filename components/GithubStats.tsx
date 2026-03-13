@@ -62,7 +62,19 @@ export default function GithubStats() {
 
         {/* Custom Count Up Row */}
         {githubData && (
-          <div className="flex flex-wrap justify-center gap-6 mb-12 w-full">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            className="flex flex-wrap justify-center gap-6 mb-12 w-full"
+          >
             {[
               { label: "Repositories", value: githubData.public_repos, color: "text-neon-blue", border: "hover:border-neon-blue hover:shadow-[0_0_20px_rgba(0,51,255,0.2)]" },
               { label: "Followers", value: githubData.followers, color: "text-white", border: "hover:border-white/50 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]" },
@@ -70,72 +82,88 @@ export default function GithubStats() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className={`bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl px-8 py-6 flex flex-col items-center justify-center text-center transition-all duration-500 w-full sm:w-auto min-w-[160px] flex-1 ${stat.border}`}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+                }}
+                className={`bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl px-8 py-6 flex flex-col items-center justify-center text-center transition-all duration-500 w-full sm:w-auto min-w-[160px] flex-1 group relative overflow-hidden ${stat.border}`}
               >
-                <div className={`text-4xl font-black font-orbitron mb-2 ${stat.color}`}>
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                <div className={`text-4xl font-black font-orbitron mb-2 relative z-10 ${stat.color} drop-shadow-[0_0_8px_rgba(0,123,255,0.4)]`}>
                   <CountUp to={stat.value} duration={2} />
                 </div>
-                <div className="text-gray-400 font-inter text-sm tracking-widest uppercase">
+                <div className="text-gray-400 font-inter text-sm tracking-widest uppercase relative z-10">
                   {stat.label}
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
-        <div className="flex flex-col xl:flex-row gap-6 justify-center items-stretch w-full">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2 }
+            }
+          }}
+          className="flex flex-col xl:flex-row gap-6 justify-center items-stretch w-full"
+        >
           {/* GitHub Stats */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="flex-1 min-w-[300px] max-w-[450px] w-full bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl p-4 hover:border-neon-blue hover:shadow-[0_0_30px_rgba(0,51,255,0.2)] transition-all duration-500 overflow-hidden flex justify-center items-center"
+            variants={{
+              hidden: { opacity: 0, scale: 0.9, y: 30 },
+              visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6 } }
+            }}
+            className="flex-1 min-w-[300px] max-w-[450px] w-full bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl p-4 hover:border-neon-blue hover:shadow-[0_0_30px_rgba(0,51,255,0.2)] transition-all duration-500 overflow-hidden flex justify-center items-center group relative"
           >
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://github-readme-stats.vercel.app/api?username=${username}&show_icons=true&theme=${theme}&bg_color=0a0a0a&hide_border=true&title_color=00f0ff&icon_color=bf00ff&text_color=ededed${cacheBuster}`}
               alt="GitHub Stats"
-              className="max-w-full h-auto drop-shadow-lg filter contrast-125 object-contain"
+              className="max-w-full h-auto drop-shadow-lg filter contrast-125 object-contain relative z-10"
             />
           </motion.div>
 
           {/* Top Languages */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="flex-1 min-w-[300px] max-w-[400px] w-full bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl p-4 hover:border-neon-purple hover:shadow-[0_0_30px_rgba(191,0,255,0.2)] transition-all duration-500 flex justify-center items-center"
+            variants={{
+              hidden: { opacity: 0, scale: 0.9, y: 30 },
+              visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6 } }
+            }}
+            className="flex-1 min-w-[300px] max-w-[400px] w-full bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl p-4 hover:border-neon-purple hover:shadow-[0_0_30px_rgba(191,0,255,0.2)] transition-all duration-500 flex justify-center items-center group relative"
           >
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://github-readme-stats.vercel.app/api/top-langs/?username=${username}&layout=compact&theme=${theme}&bg_color=0a0a0a&hide_border=true&title_color=bf00ff&text_color=ededed${cacheBuster}`}
               alt="Top Languages"
-              className="max-w-full h-auto drop-shadow-lg filter contrast-125 object-contain"
+              className="max-w-full h-auto drop-shadow-lg filter contrast-125 object-contain relative z-10"
             />
           </motion.div>
 
           {/* GitHub Streak */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="flex-1 min-w-[300px] max-w-[450px] w-full bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl p-4 hover:border-neon-cyan hover:shadow-[0_0_30px_rgba(0,240,255,0.2)] transition-all duration-500 flex justify-center items-center"
+            variants={{
+              hidden: { opacity: 0, scale: 0.9, y: 30 },
+              visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.6 } }
+            }}
+            className="flex-1 min-w-[300px] max-w-[450px] w-full bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl p-4 hover:border-neon-cyan hover:shadow-[0_0_30px_rgba(0,240,255,0.2)] transition-all duration-500 flex justify-center items-center group relative"
           >
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://streak-stats.demolab.com/?user=${username}&theme=${theme}&background=0a0a0a&border=00000000&stroke=00000000&ring=bf00ff&fire=00f0ff${cacheBuster}`}
               alt="GitHub Streak"
-              className="max-w-full h-auto drop-shadow-lg filter contrast-125 object-contain"
+              className="max-w-full h-auto drop-shadow-lg filter contrast-125 object-contain relative z-10"
             />
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Visit Profile Button */}
         <motion.div
