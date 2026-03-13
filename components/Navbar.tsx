@@ -35,19 +35,19 @@ export default function Navbar() {
               </span>
             </Link>
           ))}
+        </div>
 
-          {/* Resume — highlighted separately */}
+        {/* Right side Actions (Resume & Hire Me) */}
+        <div className="hidden md:flex items-center gap-4 ml-auto">
           <Link href="/resume">
-            <span className="text-xs lg:text-sm font-orbitron tracking-widest text-neon-purple border border-neon-purple/50 px-3 py-1 rounded-full hover:bg-neon-purple hover:text-white hover:shadow-[0_0_12px_rgba(191,0,255,0.5)] transition-all duration-300 uppercase cursor-pointer">
+            <span className="flex items-center justify-center text-xs lg:text-sm font-orbitron tracking-widest text-neon-purple border border-neon-purple/50 px-4 py-2 rounded-full hover:bg-neon-purple hover:text-white hover:shadow-[0_0_12px_rgba(191,0,255,0.5)] transition-all duration-300 uppercase cursor-pointer h-[38px]">
               Resume
             </span>
           </Link>
-        </div>
 
-        <div className="hidden md:block ml-auto">
           <a
             href="#contact"
-            className="px-5 py-2 rounded-full border border-neon-cyan text-neon-cyan font-orbitron text-xs hover:shadow-[0_0_15px_rgba(0,240,255,0.6)] hover:bg-neon-cyan hover:text-black transition-all duration-300 uppercase tracking-widest relative overflow-hidden group inline-block"
+            className="flex items-center justify-center px-4 py-2 rounded-full border border-neon-cyan text-neon-cyan font-orbitron text-xs lg:text-sm hover:shadow-[0_0_15px_rgba(0,240,255,0.6)] hover:bg-neon-cyan hover:text-black transition-all duration-300 uppercase tracking-widest relative overflow-hidden group h-[38px]"
           >
             <span className="relative z-10">Hire Me</span>
             <div className="absolute inset-0 h-full w-0 bg-neon-cyan transition-all duration-300 ease-out group-hover:w-full z-0"></div>
