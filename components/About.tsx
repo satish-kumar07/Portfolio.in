@@ -70,7 +70,6 @@ export default function About() {
             </div>
 
             <div className="relative z-10">
-              <h3 className="text-2xl md:text-3xl font-orbitron text-neon-cyan mb-6 text-center tracking-widest uppercase">User Profile</h3>
               <div className="font-inter space-y-4 md:space-y-6 text-gray-300 leading-relaxed text-sm md:text-base max-w-4xl mx-auto text-center md:text-left">
                 {about.map((paragraph, idx) => (
                   <p key={idx}>{paragraph}</p>
