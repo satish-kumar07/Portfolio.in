@@ -220,8 +220,8 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        <footer className="text-xs font-inter text-gray-600 tracking-widest uppercase pb-12">
-          <p>Prajapati Satish Kumar</p>
+        <footer className="text-sm md:text-base font-inter text-gray-500 tracking-widest uppercase pb-12 text-center">
+            <p>© 2026 Prajapati Satish Kumar</p>
         </footer>
       </div>
     </section>
