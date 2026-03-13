@@ -221,8 +221,7 @@ export default function Contact() {
         </div>
 
         <footer className="text-xs font-inter text-gray-600 tracking-widest uppercase pb-12">
-          <p>© 2026 Prajapati Satish Kumar</p>
-          <p className="mt-2 text-neon-cyan/50">Built with Next.js + TypeScript + Framer Motion</p>
+          <p>Prajapati Satish Kumar</p>
         </footer>
       </div>
     </section>
