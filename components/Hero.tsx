@@ -31,7 +31,7 @@ export default function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Dynamic Cursor Glow for Hero */}
-      <motion.div 
+      <motion.div
         className="absolute pointer-events-none z-0 w-[600px] h-[600px] bg-neon-cyan/5 rounded-full blur-[120px]"
         style={{
           x: glowX,
@@ -40,7 +40,7 @@ export default function Hero() {
           translateY: "-50%",
         }}
       />
-      <motion.div 
+      <motion.div
         className="absolute pointer-events-none z-0 w-[400px] h-[400px] bg-neon-purple/5 rounded-full blur-[100px]"
         style={{
           x: glowX,
