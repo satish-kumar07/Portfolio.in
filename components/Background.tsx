@@ -54,7 +54,7 @@ export default function Background() {
       >
         <Hyperspeed
           effectOptions={{
-            ...(hyperspeedPresets.one as any),
+            ...(hyperspeedPresets.one as Record<string, unknown>),
             colors: {
               roadColor: 0x080808,
               islandColor: 0x0a0a0a,
