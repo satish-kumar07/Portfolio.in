@@ -54,6 +54,7 @@ export default function Background() {
       >
         <Hyperspeed
           effectOptions={{
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...(hyperspeedPresets.one as any),
             colors: {
               roadColor: 0x080808,
