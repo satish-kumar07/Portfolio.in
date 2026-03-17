@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import DecryptText from "@/components/fonts/DecryptText";
 
 export default function Hero() {
   const mouseX = useMotionValue(0);
@@ -68,9 +69,20 @@ export default function Hero() {
             transition={{ duration: 1, delay: 0.4 }}
           >
             <h1 className="text-3xl md:text-5xl lg:text-7xl font-black font-orbitron mb-4 leading-[1.1] tracking-tight text-white drop-shadow-md">
-              PRAJAPATI <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple drop-shadow-[0_0_15px_rgba(0,240,255,0.4)] relative inline-block animate-glitch">
-                SATISH KUMAR
+              <DecryptText
+                text="PRAJAPATI"
+                speed={35}
+                revealFrames={10}
+                startDelay={600}
+                className="block"
+              />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-neon-blue to-neon-purple relative inline-block" style={{ filter: 'drop-shadow(0 0 15px rgba(0,240,255,0.4))' }}>
+                <DecryptText
+                  text="SATISH KUMAR"
+                  speed={35}
+                  revealFrames={12}
+                  startDelay={1200}
+                />
               </span>
             </h1>
           </motion.div>

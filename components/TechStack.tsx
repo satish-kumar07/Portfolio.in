@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import MagicBento, { MagicBentoCard } from "./MagicBento";
 
 const skills = {
   Languages: ["Python", "C++", "C", "TypeScript"],
@@ -24,7 +25,17 @@ export default function TechStack() {
           <div className="h-1 w-24 bg-neon-purple mx-auto mt-4 shadow-neon-purple"></div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-foreground">
+        <MagicBento
+          enableStars={false}
+          enableSpotlight={true}
+          enableBorderGlow={true}
+          enableTilt={false}
+          enableMagnetism={false}
+          clickEffect={true}
+          spotlightRadius={400}
+          glowColor="0, 240, 255"
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 text-foreground"
+        >
           {Object.entries(skills).map(([category, items], idx) => (
             <motion.div
               key={idx}
@@ -32,24 +43,26 @@ export default function TechStack() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: idx * 0.2 }}
               viewport={{ once: true }}
-              className="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_32px_rgba(0,51,255,0.2)] transition-all duration-500"
+              className="h-full"
             >
-              <h3 className="text-2xl font-orbitron text-neon-blue mb-6 uppercase tracking-widest text-center">
-                {category}
-              </h3>
-              <div className="flex flex-wrap gap-3 justify-center">
-                {items.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-sm font-inter text-gray-300 hover:text-white hover:border-neon-blue hover:shadow-neon-blue/50 transition-all duration-300 cursor-default"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
+              <MagicBentoCard className="h-full bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_32px_rgba(0,51,255,0.2)] transition-all duration-500">
+                <h3 className="text-2xl font-orbitron text-neon-blue mb-6 uppercase tracking-widest text-center">
+                  {category}
+                </h3>
+                <div className="flex flex-wrap gap-3 justify-center">
+                  {items.map((skill, i) => (
+                    <span
+                      key={i}
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-sm font-inter text-gray-300 hover:text-white hover:border-neon-blue hover:shadow-neon-blue/50 transition-all duration-300 cursor-default"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </MagicBentoCard>
             </motion.div>
           ))}
-        </div>
+        </MagicBento>
       </div>
     </section>
   );

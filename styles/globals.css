@@ -4,10 +4,11 @@
 
 @layer base {
   html {
-    font-size: 14px; /* Default is 16px. This scales all rem-based classes down. */
+    font-size: 14px;
+    /* Default is 16px. This scales all rem-based classes down. */
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-inter), sans-serif;
@@ -41,4 +42,15 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #bf00ff;
+}
+
+/* Decrypt text flicker */
+@keyframes flicker {
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0.9;
+  }
 }
