@@ -35,7 +35,6 @@ export default function DecryptText({
   hoverReplay = true,
 }: DecryptTextProps) {
   const [display, setDisplay] = useState<string>("");
-  const frameRef = useRef<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   /* ── Core animation logic ─────────────────────────────────────── */
