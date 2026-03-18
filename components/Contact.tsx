@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { FaEnvelope, FaLinkedin, FaGithub } from "react-icons/fa";
+import { FaEnvelope, FaLinkedin, FaGithub, FaMedium } from "react-icons/fa";
 
 const MagneticWrapper = ({ children, className }: { children: React.ReactNode, className?: string }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -75,7 +75,8 @@ export default function Contact() {
   const links = [
     { icon: <FaEnvelope size={24} />, href: "mailto:prajapatisatishkumar792@gmail.com", label: "Email Me", color: "#00f0ff" },
     { icon: <FaLinkedin size={24} />, href: "https://www.linkedin.com/in/satish-kumar-prajapati/", label: "LinkedIn", color: "#0077b5" },
-    { icon: <FaGithub size={24} />, href: "https://github.com/satish-kumar07", label: "GitHub", color: "#ffffff" }
+    { icon: <FaGithub size={24} />, href: "https://github.com/satish-kumar07", label: "GitHub", color: "#ffffff" },
+    { icon: <FaMedium size={24} />, href: "https://medium.com/@prajapatisatishkumar792", label: "Medium", color: "#ffffff" }
   ];
 
   return (

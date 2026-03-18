@@ -8,6 +8,7 @@ import TechStack from "@/components/TechStack";
 import Achievements from "@/components/Achievements";
 import Projects from "@/components/Projects";
 import GithubStats from "@/components/GithubStats";
+import Experience from "@/components/Experience";
 // import LeetcodeStats from "@/components/LeetcodeStats";
 import Contact from "@/components/Contact";
 
@@ -30,6 +31,7 @@ export default function Home() {
         <TechStack />
         <Achievements />
         <Projects />
+        <Experience />
         <GithubStats />
         {/* <LeetcodeStats /> */}
         <Contact />

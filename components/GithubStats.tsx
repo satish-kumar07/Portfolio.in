@@ -65,7 +65,7 @@ export default function GithubStats() {
           enableStars={false}
           enableSpotlight={true}
           enableBorderGlow={true}
-          enableTilt={false}
+          enableTilt={true}
           enableMagnetism={false}
           clickEffect={true}
           spotlightRadius={400}

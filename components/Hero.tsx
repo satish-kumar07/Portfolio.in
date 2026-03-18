@@ -142,6 +142,13 @@ export default function Hero() {
               </div>
             </a>
 
+            <a href="https://medium.com/@prajapatisatishkumar792" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors duration-300 group">
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-xs font-orbitron tracking-widest uppercase">Medium</span>
+                <span className="w-1 h-1 rounded-full bg-white scale-0 group-hover:scale-100 transition-transform duration-300 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+              </div>
+            </a>
+
             <a href="https://leetcode.com/u/PRAJAPATI_007/" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white transition-colors duration-300 group">
               <div className="flex flex-col items-center gap-2">
                 {/*<span className="text-xs font-orbitron tracking-widest uppercase">LeetCode</span>*/}
