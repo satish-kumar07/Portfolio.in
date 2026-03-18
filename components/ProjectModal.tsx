@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaGithub, FaExternalLinkAlt, FaTimes } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
 import { Project } from "@/data/projectsData";
 
 interface ProjectModalProps {
