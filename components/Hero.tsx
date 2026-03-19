@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import DecryptText from "@/components/fonts/DecryptText";
 
 // Magnetic Hover Wrapper
@@ -48,7 +48,7 @@ const HoverGlitchText = ({ text }: { text: string }) => {
     }
     let iteration = 0;
     const interval = setInterval(() => {
-      setDisplayText((prev) =>
+      setDisplayText(() =>
         text
           .split("")
           .map((letter, index) => {

@@ -74,7 +74,7 @@ const DecryptText = ({ text, isHovered }: { text: string; isHovered: boolean }) 
 
     let iteration = 0;
     const interval = setInterval(() => {
-      setDisplayText((prev) =>
+      setDisplayText(() =>
         text
           .split("")
           .map((letter, index) => {
@@ -98,6 +98,7 @@ const DecryptText = ({ text, isHovered }: { text: string; isHovered: boolean }) 
 };
 
 // Fancy Interactive Card with Mouse Flashlight
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const AcademicInteractiveCard = ({ edu, idx, isHovered, isDimmed, setHoveredEduIdx }: any) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
