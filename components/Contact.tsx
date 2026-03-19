@@ -1,42 +1,164 @@
 "use client";
-import React, { useState, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useCallback } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { FaEnvelope, FaLinkedin, FaGithub, FaMedium } from "react-icons/fa";
 
-const MagneticWrapper = ({ children, className }: { children: React.ReactNode, className?: string }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+/* ─── Spotlight Card ── */
+const SpotlightLink = ({
+  children,
+  color,
+  href,
+}: {
+  children: React.ReactNode;
+  color: string;
+  href: string;
+}) => {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const [hovered, setHovered] = useState(false);
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
-    const { clientX, clientY } = e;
-    const { height, width, left, top } = ref.current.getBoundingClientRect();
-    const middleX = clientX - (left + width / 2);
-    const middleY = clientY - (top + height / 2);
-    // Multiply by a factor (e.g. 0.2) to limit movement
-    setPosition({ x: middleX * 0.2, y: middleY * 0.2 });
-  };
-
-  const reset = () => {
-    setPosition({ x: 0, y: 0 });
-  };
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      mouseX.set(e.clientX - rect.left);
+      mouseY.set(e.clientY - rect.top);
+    },
+    [mouseX, mouseY]
+  );
 
   return (
-    <motion.div
+    <motion.a
       ref={ref}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={reset}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-      className={className}
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="group relative block rounded-xl overflow-hidden"
     >
-      {children}
-    </motion.div>
+      {/* Border glow */}
+      {hovered && (
+        <motion.div
+          className="absolute -inset-[1px] rounded-xl pointer-events-none z-0"
+          style={{
+            background: `radial-gradient(250px circle at ${mouseX.get()}px ${mouseY.get()}px, ${color}25, transparent 50%)`,
+          }}
+        />
+      )}
+      <div className="relative z-10 rounded-xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm transition-all duration-400 group-hover:border-white/[0.12] group-hover:bg-white/[0.04] overflow-hidden">
+        {/* Interior spotlight */}
+        {hovered && (
+          <motion.div
+            className="absolute pointer-events-none z-0"
+            style={{
+              width: 180,
+              height: 180,
+              x: mouseX.get() - 90,
+              y: mouseY.get() - 90,
+              background: `radial-gradient(circle, ${color}0d 0%, transparent 70%)`,
+              borderRadius: "50%",
+            }}
+          />
+        )}
+        {children}
+      </div>
+    </motion.a>
+  );
+};
+
+/* ─── Form Input Wrapper ── */
+const FloatingInput = ({
+  label,
+  name,
+  type = "text",
+  textarea = false,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  textarea?: boolean;
+}) => {
+  const [focused, setFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(false);
+  const accent = "#00f0ff";
+
+  return (
+    <div className="relative group">
+      {/* Animated border highlight */}
+      <motion.div
+        className="absolute -inset-[1px] rounded-xl pointer-events-none z-0"
+        style={{
+          background: focused
+            ? `linear-gradient(135deg, ${accent}20, transparent, ${accent}10)`
+            : "transparent",
+        }}
+        animate={{ opacity: focused ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+      />
+
+      <div className="relative z-10">
+        {textarea ? (
+          <textarea
+            name={name}
+            required
+            rows={4}
+            onFocus={() => setFocused(true)}
+            onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
+            onChange={(e) => setHasValue(e.target.value.length > 0)}
+            className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 pt-6 pb-3 text-white font-inter text-sm resize-none focus:outline-none focus:border-neon-cyan/40 transition-all duration-300 placeholder-transparent peer"
+            placeholder={label}
+          />
+        ) : (
+          <input
+            type={type}
+            name={name}
+            required
+            onFocus={() => setFocused(true)}
+            onBlur={(e) => { setFocused(false); setHasValue(e.target.value.length > 0); }}
+            onChange={(e) => setHasValue(e.target.value.length > 0)}
+            className="w-full bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 pt-6 pb-3 text-white font-inter text-sm focus:outline-none focus:border-neon-cyan/40 transition-all duration-300 placeholder-transparent peer"
+            placeholder={label}
+          />
+        )}
+        <label
+          className={`absolute left-4 transition-all duration-200 pointer-events-none font-orbitron uppercase tracking-widest ${
+            focused || hasValue
+              ? "top-2 text-[8px] text-neon-cyan/80"
+              : "top-4 text-[10px] text-gray-600"
+          }`}
+        >
+          {label}
+        </label>
+      </div>
+    </div>
   );
 };
 
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const formRef = useRef<HTMLDivElement>(null);
+  const formMouseX = useMotionValue(0);
+  const formMouseY = useMotionValue(0);
+  const formRotateX = useMotionValue(0);
+  const formRotateY = useMotionValue(0);
+  const formSpringX = useSpring(formRotateX, { stiffness: 150, damping: 20 });
+  const formSpringY = useSpring(formRotateY, { stiffness: 150, damping: 20 });
+  const [formHovered, setFormHovered] = useState(false);
+
+  const handleFormMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!formRef.current) return;
+      const rect = formRef.current.getBoundingClientRect();
+      formMouseX.set(e.clientX - rect.left);
+      formMouseY.set(e.clientY - rect.top);
+      formRotateX.set(((e.clientY - rect.top - rect.height / 2) / rect.height) * -3);
+      formRotateY.set(((e.clientX - rect.left - rect.width / 2) / rect.width) * 3);
+    },
+    [formMouseX, formMouseY, formRotateX, formRotateY]
+  );
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -50,11 +172,8 @@ export default function Contact() {
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
-        body: json
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: json,
       });
       const result = await res.json();
       if (result.success) {
@@ -73,171 +192,223 @@ export default function Contact() {
   };
 
   const links = [
-    { icon: <FaEnvelope size={24} />, href: "mailto:prajapatisatishkumar792@gmail.com", label: "Email Me", color: "#00f0ff" },
-    { icon: <FaLinkedin size={24} />, href: "https://www.linkedin.com/in/satish-kumar-prajapati/", label: "LinkedIn", color: "#0077b5" },
-    { icon: <FaGithub size={24} />, href: "https://github.com/satish-kumar07", label: "GitHub", color: "#ffffff" },
-    { icon: <FaMedium size={24} />, href: "https://medium.com/@prajapatisatishkumar792", label: "Medium", color: "#ffffff" }
+    { icon: <FaEnvelope size={18} />, href: "mailto:prajapatisatishkumar792@gmail.com", label: "Email", sub: "prajapatisatishkumar792@gmail.com", color: "#00f0ff" },
+    { icon: <FaLinkedin size={18} />, href: "https://www.linkedin.com/in/satish-kumar-prajapati/", label: "LinkedIn", sub: "Connect professionally", color: "#0077b5" },
+    { icon: <FaGithub size={18} />, href: "https://github.com/satish-kumar07", label: "GitHub", sub: "View my repositories", color: "#a855f7" },
+    { icon: <FaMedium size={18} />, href: "https://medium.com/@prajapatisatishkumar792", label: "Medium", sub: "Read my articles", color: "#34d399" },
   ];
 
   return (
     <section id="contact" className="py-24 relative z-10 bg-transparent">
-      <div className="max-w-6xl mx-auto px-4 border-t border-white/10 pt-24 text-center">
+      <div className="max-w-5xl mx-auto px-4">
+
+        {/* ─── Header ── */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mb-16"
+          className="text-center mb-14"
         >
-          <h2 className="text-4xl md:text-5xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-cyan inline-block uppercase mb-4">
-            Contact.Me
+          <h2 className="text-4xl md:text-5xl font-orbitron font-bold text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple inline-block uppercase mb-3">
+            CONTACT.INIT
           </h2>
-          <p className="text-gray-400 font-inter text-lg">
-            Let&apos;s connect and build together
+          <p className="text-gray-500 font-inter text-sm max-w-md mx-auto">
+            Have a project in mind or want to collaborate? Let&apos;s connect.
           </p>
-          <div className="h-1 w-24 bg-neon-blue mx-auto mt-6 shadow-neon-blue"></div>
+          <div className="h-1 w-24 bg-neon-purple mx-auto mt-5 shadow-neon-purple" />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto text-left mb-24">
-          {/* Left Column: Contact Cards */}
-          <motion.div 
+        {/* ─── Content Grid ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-16">
+
+          {/* Left: Social Links (2 cols) */}
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={{
               hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: { staggerChildren: 0.1 }
-              }
+              visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
             }}
-            className="flex flex-col gap-6"
+            className="lg:col-span-2 flex flex-col gap-3"
           >
             {links.map((link, idx) => (
-              <MagneticWrapper key={idx}>
-                <motion.a
-                  href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  variants={{
-                    hidden: { opacity: 0, x: -20 },
-                    visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
-                  }}
-                  className="group flex items-center gap-4 p-5 bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 relative overflow-hidden h-full"
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = link.color;
-                    e.currentTarget.style.boxShadow = `0 0 20px ${link.color}20`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  {/* Holographic Glare Effect */}
-                  <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-
-                  {/* Hover gradient background effect */}
-                  <div
-                    className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none"
-                    style={{ background: `linear-gradient(90deg, ${link.color}, transparent)` }}
-                  />
-
-                  <div
-                    className="p-3 rounded-lg bg-black/50 border border-white/5 transition-colors duration-300 relative z-10"
-                    style={{ color: link.color }}
-                  >
-                    {link.icon}
+              <motion.div
+                key={idx}
+                variants={{
+                  hidden: { opacity: 0, x: -15 },
+                  visible: { opacity: 1, x: 0, transition: { duration: 0.4 } },
+                }}
+              >
+                <SpotlightLink color={link.color} href={link.href}>
+                  <div className="flex items-center gap-4 p-4 relative z-10">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border transition-all duration-300"
+                      style={{
+                        color: link.color,
+                        borderColor: `${link.color}20`,
+                        background: `${link.color}08`,
+                      }}
+                    >
+                      {link.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-orbitron text-sm text-white/90 group-hover:text-white transition-colors tracking-wider">
+                        {link.label}
+                      </h3>
+                      <p className="text-[11px] font-inter text-gray-600 truncate group-hover:text-gray-400 transition-colors">
+                        {link.sub}
+                      </p>
+                    </div>
+                    <span
+                      className="ml-auto text-xs opacity-0 group-hover:opacity-60 -translate-x-1 group-hover:translate-x-0 transition-all duration-300"
+                      style={{ color: link.color }}
+                    >
+                      →
+                    </span>
                   </div>
-                  <div className="relative z-10">
-                    <h3 className="font-orbitron font-bold text-gray-200 tracking-wider text-lg group-hover:text-white transition-colors">{link.label}</h3>
-                    <p className="text-sm font-inter text-gray-400 truncate mt-1">
-                      {link.label === "Email Me" ? "prajapatisatishkumar792@gmail.com" : "Connect with me"}
-                    </p>
-                  </div>
-                </motion.a>
-              </MagneticWrapper>
+                </SpotlightLink>
+              </motion.div>
             ))}
+
+            {/* Quick stats */}
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 10 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.3 } },
+              }}
+              className="mt-2 flex gap-4"
+            >
+              {[
+                { label: "Response Time", value: "< 24h", color: "#00f0ff" },
+                { label: "Availability", value: "Open", color: "#4ade80" },
+              ].map((stat, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-xl bg-white/[0.02] border border-white/[0.06] p-3 text-center"
+                >
+                  <div className="text-sm font-orbitron font-bold" style={{ color: stat.color }}>
+                    {stat.value}
+                  </div>
+                  <div className="text-[8px] font-orbitron text-gray-700 uppercase tracking-widest mt-0.5">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
           </motion.div>
 
-          {/* Right Column: Contact Form */}
+          {/* Right: Contact Form (3 cols) */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            ref={formRef}
+            onMouseMove={handleFormMouseMove}
+            onMouseEnter={() => setFormHovered(true)}
+            onMouseLeave={() => { setFormHovered(false); formRotateX.set(0); formRotateY.set(0); }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
             viewport={{ once: true }}
-            className="bg-white/5 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)] border border-white/10 p-8 rounded-xl relative overflow-hidden"
+            style={{
+              rotateX: formSpringX,
+              rotateY: formSpringY,
+              transformPerspective: 1000,
+            }}
+            className="lg:col-span-3 group relative"
           >
-            {/* Form glow effect */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-neon-purple/20 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
+            {/* Border glow */}
+            {formHovered && (
+              <motion.div
+                className="absolute -inset-[1px] rounded-2xl pointer-events-none z-0"
+                style={{
+                  background: `radial-gradient(400px circle at ${formMouseX.get()}px ${formMouseY.get()}px, rgba(0,240,255,0.12), transparent 50%)`,
+                }}
+              />
+            )}
 
-            <form
-              onSubmit={onSubmit}
-              className="relative z-10 flex flex-col gap-6"
-            >
-              {/* Web3Forms Access Key */}
-              <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY} />
-              
-              <div className="flex flex-col gap-2">
-                <label className="font-orbitron text-xs tracking-widest text-neon-cyan uppercase">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-inter focus:outline-none focus:border-neon-cyan focus:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all"
-                  placeholder="Enter your name"
+            <div className="relative z-10 rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm overflow-hidden transition-all duration-500 group-hover:border-white/[0.10]">
+              {/* Interior spotlight */}
+              {formHovered && (
+                <motion.div
+                  className="absolute pointer-events-none z-0"
+                  style={{
+                    width: 300, height: 300,
+                    x: formMouseX.get() - 150, y: formMouseY.get() - 150,
+                    background: "radial-gradient(circle, rgba(0,240,255,0.06) 0%, transparent 70%)",
+                    borderRadius: "50%",
+                  }}
                 />
-              </div>
+              )}
 
-              <div className="flex flex-col gap-2">
-                <label className="font-orbitron text-xs tracking-widest text-neon-cyan uppercase">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-inter focus:outline-none focus:border-neon-cyan focus:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all"
-                  placeholder="Enter your email address"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="font-orbitron text-xs tracking-widest text-neon-cyan uppercase">Message</label>
-                <textarea
-                  name="message"
-                  required
-                  rows={4}
-                  className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white font-inter resize-none focus:outline-none focus:border-neon-cyan focus:shadow-[0_0_10px_rgba(0,240,255,0.3)] transition-all"
-                  placeholder="Write your message here..."
-                ></textarea>
-              </div>
-
-              <MagneticWrapper>
-                <button
-                  type="submit"
-                  disabled={status === "sending" || status === "success"}
-                  className={`group relative w-full py-4 border rounded-lg font-orbitron tracking-widest uppercase overflow-hidden transition-all duration-300 mt-2 ${status === "success"
-                    ? "bg-green-500/20 border-green-500 text-green-400"
-                    : "bg-neon-cyan/10 border-neon-cyan/50 text-neon-cyan hover:text-black"
-                    }`}
-                >
-                  <span className="relative z-10 font-bold">
-                    {status === "idle" && "Transmit Message"}
-                    {status === "sending" && "Transmitting..."}
-                    {status === "success" && "Message Sent"}
-                    {status === "error" && "Error - Try Again"}
+              <div className="relative z-10 p-6 md:p-8">
+                {/* Form header */}
+                <div className="flex items-center gap-2 mb-6">
+                  <motion.div
+                    className="w-2 h-2 rounded-full bg-neon-cyan"
+                    animate={{
+                      boxShadow: [
+                        "0 0 4px rgba(0,240,255,0.4)",
+                        "0 0 12px rgba(0,240,255,0.8)",
+                        "0 0 4px rgba(0,240,255,0.4)",
+                      ],
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  <span className="text-[10px] font-orbitron text-neon-cyan/70 uppercase tracking-[0.2em]">
+                    Secure Channel
                   </span>
+                  <div className="flex-1 h-[1px] bg-gradient-to-r from-neon-cyan/15 to-transparent" />
+                </div>
 
-                  {status === "idle" && (
-                    <div className="absolute inset-0 w-0 bg-neon-cyan transition-all duration-300 ease-out group-hover:w-full z-0" />
-                  )}
-                </button>
-              </MagneticWrapper>
-            </form>
+                <form onSubmit={onSubmit} className="flex flex-col gap-4">
+                  <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY} />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FloatingInput label="Name" name="name" />
+                    <FloatingInput label="Email" name="email" type="email" />
+                  </div>
+
+                  <FloatingInput label="Message" name="message" textarea />
+
+                  {/* Submit button */}
+                  <motion.button
+                    type="submit"
+                    disabled={status === "sending" || status === "success"}
+                    whileHover={{ scale: status === "idle" ? 1.01 : 1 }}
+                    whileTap={{ scale: status === "idle" ? 0.98 : 1 }}
+                    className={`relative w-full py-3.5 rounded-xl font-orbitron text-[11px] uppercase tracking-widest overflow-hidden transition-all duration-300 mt-1 border ${
+                      status === "success"
+                        ? "bg-green-500/10 border-green-500/30 text-green-400"
+                        : status === "error"
+                        ? "bg-red-500/10 border-red-500/30 text-red-400"
+                        : "border-neon-cyan/25 text-neon-cyan bg-neon-cyan/[0.04] hover:bg-neon-cyan/[0.08] hover:border-neon-cyan/40 hover:shadow-[0_0_20px_rgba(0,240,255,0.08)]"
+                    }`}
+                  >
+                    <span className="relative z-10 font-bold">
+                      {status === "idle" && "Send Message →"}
+                      {status === "sending" && "Transmitting..."}
+                      {status === "success" && "✓ Message Delivered"}
+                      {status === "error" && "Error — Retry"}
+                    </span>
+                  </motion.button>
+                </form>
+              </div>
+            </div>
           </motion.div>
         </div>
 
-        <footer className="text-sm md:text-base font-inter text-gray-500 tracking-widest uppercase pb-12 text-center">
-            <p>© 2026 Prajapati Satish Kumar</p>
-        </footer>
+        {/* ─── Footer ── */}
+        <motion.footer
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          viewport={{ once: true }}
+          className="text-center pt-8 border-t border-white/[0.04]"
+        >
+          <p className="text-[10px] font-orbitron text-gray-700 tracking-widest uppercase">
+            © 2026 Prajapati Satish Kumar · Built with Next.js
+          </p>
+        </motion.footer>
       </div>
     </section>
   );
