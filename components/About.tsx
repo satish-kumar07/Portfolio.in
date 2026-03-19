@@ -28,14 +28,11 @@ const education = [
 
 const about = [
   <>
-    Hello, I’m <span className="text-white font-bold text-neon-cyan drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">Prajapati Satish Kumar</span>. I&apos;m a Computer Science & Engineering student deeply fascinated by the intersection of <span className="text-white font-semibold">Artificial Intelligence</span>, scalable backend architecture, and creating immersive full-stack ecosystems.
+    I am a B.Tech student specializing in Artificial Intelligence and Machine Learning, focused on solving real-world problems using data-driven approaches.
+    I chose AI/ML because it enables systems to learn, adapt, and make intelligent decisions at scale.
+    I enjoy working on projects involving NLP, predictive modeling, and automation. My goal is to become an AI/ML Engineer building impactful and production-ready intelligent systems.
   </>,
-  <>
-    My drive lies in turning complex, abstract concepts into tangible, high-performance applications. Whether it&apos;s architecting AI-powered platforms featuring real-time face recognition or integrating robust IoT networks, I thrive on building systems that bridge the gap between cutting-edge algorithms and seamless user experiences.
-  </>,
-  <>
-    When I&apos;m not architecting new projects, you&apos;ll find me optimizing code through rigorous Data Structures & Algorithms practice. I believe that writing highly efficient, elegantly maintainable code is the true core of engineering intelligent solutions that leave a lasting impact.
-  </>
+
 ];
 
 export default function About() {
