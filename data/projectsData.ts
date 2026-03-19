@@ -71,7 +71,7 @@ const projects: Project[] = [
       "JavaScript",
     ],
     github: "https://github.com/satish-kumar07/RAG_ON_DSA",
-    live: "https://github.com/satish-kumar07/RAG_ON_DSA",
+    live: "https://dsa-frontend-rag.onrender.com/",
   },
   {
     slug: "ivy-league-opportunities",
