@@ -941,6 +941,10 @@ class App {
   timeOffset: number;
   hasValidSize: boolean;
   useComposer: boolean;
+  lastClickTime: number;
+  isHyperMode: boolean;
+  isMouseDown: boolean;
+  isEdgeBoosting: boolean;
 
   constructor(container: HTMLElement, options: HyperspeedOptions) {
     this.options = options;
@@ -1010,11 +1014,17 @@ class App {
     this.timeOffset = 0;
     this.useComposer = true;
 
+    this.lastClickTime = 0;
+    this.isHyperMode = false;
+    this.isMouseDown = false;
+    this.isEdgeBoosting = false;
+
     this.tick = this.tick.bind(this);
     this.init = this.init.bind(this);
     this.setSize = this.setSize.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
 
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
@@ -1087,6 +1097,7 @@ class App {
     this.container.addEventListener('mousedown', this.onMouseDown);
     this.container.addEventListener('mouseup', this.onMouseUp);
     this.container.addEventListener('mouseout', this.onMouseUp);
+    this.container.addEventListener('mousemove', this.onMouseMove);
 
     this.container.addEventListener('touchstart', this.onTouchStart, { passive: true });
     this.container.addEventListener('touchend', this.onTouchEnd, { passive: true });
@@ -1097,25 +1108,83 @@ class App {
   }
 
   onMouseDown(ev: MouseEvent) {
+    this.isMouseDown = true;
+    const now = Date.now();
+    const DOUBLE_CLICK_MS = 300;
+    const isDoubleClick = now - this.lastClickTime < DOUBLE_CLICK_MS;
+    this.lastClickTime = now;
+
+    if (isDoubleClick) {
+      // Double-click: hyper boost (2× speed)
+      this.isHyperMode = true;
+      this.fovTarget = this.options.fovSpeedUp + 30;
+      this.speedUpTarget = this.options.speedUp * 2;
+    } else {
+      // Single hold: normal boost (1× speed)
+      this.isHyperMode = false;
+      this.fovTarget = this.options.fovSpeedUp;
+      this.speedUpTarget = this.options.speedUp;
+    }
+
     if (this.options.onSpeedUp) this.options.onSpeedUp(ev);
-    this.fovTarget = this.options.fovSpeedUp;
-    this.speedUpTarget = this.options.speedUp;
+  }
+
+  onMouseMove(ev: MouseEvent) {
+    if (this.isMouseDown || this.isHyperMode) return;
+
+    const rect = this.container.getBoundingClientRect();
+    const x = ev.clientX - rect.left;
+    const edgeThreshold = rect.width * 0.15; // 15% from left or right edge
+
+    const isNearEdge = x < edgeThreshold || x > rect.width - edgeThreshold;
+
+    if (isNearEdge && !this.isEdgeBoosting) {
+      this.isEdgeBoosting = true;
+      this.fovTarget = this.options.fovSpeedUp;
+      this.speedUpTarget = this.options.speedUp;
+      if (this.options.onSpeedUp) this.options.onSpeedUp(ev);
+    } else if (!isNearEdge && this.isEdgeBoosting) {
+      this.isEdgeBoosting = false;
+      this.fovTarget = this.options.fov;
+      this.speedUpTarget = 0;
+      if (this.options.onSlowDown) this.options.onSlowDown(ev);
+    }
   }
 
   onMouseUp(ev: MouseEvent) {
+    this.isMouseDown = false;
+    this.isEdgeBoosting = false;
     if (this.options.onSlowDown) this.options.onSlowDown(ev);
+    this.isHyperMode = false;
     this.fovTarget = this.options.fov;
     this.speedUpTarget = 0;
   }
 
   onTouchStart(ev: TouchEvent) {
+    this.isMouseDown = true;
+    const now = Date.now();
+    const DOUBLE_TAP_MS = 300;
+    const isDoubleTap = now - this.lastClickTime < DOUBLE_TAP_MS;
+    this.lastClickTime = now;
+
+    if (isDoubleTap) {
+      this.isHyperMode = true;
+      this.fovTarget = this.options.fovSpeedUp + 30;
+      this.speedUpTarget = this.options.speedUp * 2;
+    } else {
+      this.isHyperMode = false;
+      this.fovTarget = this.options.fovSpeedUp;
+      this.speedUpTarget = this.options.speedUp;
+    }
+
     if (this.options.onSpeedUp) this.options.onSpeedUp(ev);
-    this.fovTarget = this.options.fovSpeedUp;
-    this.speedUpTarget = this.options.speedUp;
   }
 
   onTouchEnd(ev: TouchEvent) {
+    this.isMouseDown = false;
+    this.isEdgeBoosting = false;
     if (this.options.onSlowDown) this.options.onSlowDown(ev);
+    this.isHyperMode = false;
     this.fovTarget = this.options.fov;
     this.speedUpTarget = 0;
   }
@@ -1204,6 +1273,7 @@ class App {
       this.container.removeEventListener('mousedown', this.onMouseDown);
       this.container.removeEventListener('mouseup', this.onMouseUp);
       this.container.removeEventListener('mouseout', this.onMouseUp);
+      this.container.removeEventListener('mousemove', this.onMouseMove);
 
       this.container.removeEventListener('touchstart', this.onTouchStart);
       this.container.removeEventListener('touchend', this.onTouchEnd);
@@ -1257,6 +1327,31 @@ const DEFAULT_EFFECT_OPTIONS: Partial<HyperspeedOptions> = {};
 const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTIONS }) => {
   const hyperspeed = useRef<HTMLDivElement>(null);
   const appRef = useRef<App | null>(null);
+  const hudRef = useRef<HTMLDivElement>(null);
+  const hudTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showHud = (hyper: boolean) => {
+    const hud = hudRef.current;
+    if (!hud) return;
+    if (hudTimerRef.current) clearTimeout(hudTimerRef.current);
+    hud.textContent = hyper ? '⚡ HYPER BOOST' : '▶ BOOST';
+    hud.style.color = hyper ? '#ff00ff' : '#00f0ff';
+    hud.style.borderColor = hyper ? '#ff00ff55' : '#00f0ff55';
+    hud.style.boxShadow = hyper
+      ? '0 0 20px #ff00ff60, inset 0 0 10px #ff00ff20'
+      : '0 0 14px #00f0ff50, inset 0 0 6px #00f0ff15';
+    hud.style.opacity = '1';
+    hud.style.transform = 'translateX(-50%) scale(1)';
+  };
+
+  const hideHud = () => {
+    const hud = hudRef.current;
+    if (!hud) return;
+    hudTimerRef.current = setTimeout(() => {
+      hud.style.opacity = '0';
+      hud.style.transform = 'translateX(-50%) scale(0.85)';
+    }, 200);
+  };
 
   useEffect(() => {
     if (appRef.current) {
@@ -1276,7 +1371,18 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTION
     const options: HyperspeedOptions = {
       ...defaultOptions,
       ...effectOptions,
-      colors: { ...defaultOptions.colors, ...effectOptions.colors }
+      colors: { ...defaultOptions.colors, ...effectOptions.colors },
+      onSpeedUp: (ev) => {
+        if (effectOptions.onSpeedUp) effectOptions.onSpeedUp(ev);
+        // read hyper state from app after it updates
+        setTimeout(() => {
+          showHud(appRef.current?.isHyperMode ?? false);
+        }, 0);
+      },
+      onSlowDown: (ev) => {
+        if (effectOptions.onSlowDown) effectOptions.onSlowDown(ev);
+        hideHud();
+      },
     };
     if (typeof options.distortion === 'string') {
       options.distortion = distortions[options.distortion];
@@ -1290,10 +1396,60 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTION
       if (appRef.current) {
         appRef.current.dispose();
       }
+      if (hudTimerRef.current) clearTimeout(hudTimerRef.current);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectOptions]);
 
-  return <div id="lights" className="w-full h-full" ref={hyperspeed}></div>;
+  return (
+    <div className="w-full h-full relative" style={{ userSelect: 'none' }}>
+      <div id="lights" className="w-full h-full" ref={hyperspeed} />
+      {/* Speed HUD */}
+      <div
+        ref={hudRef}
+        style={{
+          position: 'absolute',
+          bottom: '18px',
+          left: '50%',
+          transform: 'translateX(-50%) scale(0.85)',
+          opacity: 0,
+          transition: 'opacity 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease',
+          pointerEvents: 'none',
+          fontFamily: '"Orbitron", monospace',
+          fontSize: '10px',
+          letterSpacing: '0.25em',
+          textTransform: 'uppercase',
+          color: '#00f0ff',
+          padding: '6px 16px',
+          border: '1px solid #00f0ff55',
+          borderRadius: '999px',
+          background: 'rgba(0,0,0,0.55)',
+          backdropFilter: 'blur(8px)',
+          whiteSpace: 'nowrap',
+          zIndex: 50,
+        }}
+      >
+        ▶ BOOST
+      </div>
+      {/* Hint text */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '18px',
+          right: '20px',
+          pointerEvents: 'none',
+          fontFamily: '"Orbitron", monospace',
+          fontSize: '9px',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.15)',
+          zIndex: 50,
+        }}
+      >
+        hold · dbl-click ⚡
+      </div>
+    </div>
+  );
 };
 
 export default Hyperspeed;

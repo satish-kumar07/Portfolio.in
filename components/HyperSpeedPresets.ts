@@ -1,7 +1,7 @@
 export const hyperspeedPresets = {
   one: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
+    onSpeedUp: () => { },
+    onSlowDown: () => { },
     distortion: 'turbulentDistortion',
     length: 400,
     roadWidth: 10,
@@ -9,7 +9,7 @@ export const hyperspeedPresets = {
     lanesPerRoad: 3,
     fov: 90,
     fovSpeedUp: 150,
-    speedUp: 2,
+    speedUp: 4,
     carLightsFade: 0.4,
     totalSideLightSticks: 20,
     lightPairsPerRoadWay: 40,
@@ -20,7 +20,7 @@ export const hyperspeedPresets = {
     lightStickHeight: [1.3, 1.7],
     movingAwaySpeed: [60, 80],
     movingCloserSpeed: [-120, -160],
-    carLightsLength: [400 * 0.03, 400 * 0.2],
+    carLightsLength: [400 * 0.08, 400 * 0.3],
     carLightsRadius: [0.05, 0.14],
     carWidthPercentage: [0.3, 0.5],
     carShiftX: [-0.8, 0.8],
@@ -37,8 +37,8 @@ export const hyperspeedPresets = {
     }
   },
   two: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
+    onSpeedUp: () => { },
+    onSlowDown: () => { },
     distortion: 'mountainDistortion',
     length: 400,
     roadWidth: 9,
@@ -75,8 +75,8 @@ export const hyperspeedPresets = {
     }
   },
   three: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
+    onSpeedUp: () => { },
+    onSlowDown: () => { },
     distortion: 'xyDistortion',
     length: 400,
     roadWidth: 9,
@@ -112,8 +112,8 @@ export const hyperspeedPresets = {
     }
   },
   four: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
+    onSpeedUp: () => { },
+    onSlowDown: () => { },
     distortion: 'LongRaceDistortion',
     length: 400,
     roadWidth: 10,
@@ -149,8 +149,8 @@ export const hyperspeedPresets = {
     }
   },
   five: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
+    onSpeedUp: () => { },
+    onSlowDown: () => { },
     distortion: 'turbulentDistortion',
     length: 400,
     roadWidth: 9,
@@ -186,8 +186,8 @@ export const hyperspeedPresets = {
     }
   },
   six: {
-    onSpeedUp: () => {},
-    onSlowDown: () => {},
+    onSpeedUp: () => { },
+    onSlowDown: () => { },
     distortion: 'deepDistortion',
     length: 400,
     roadWidth: 18,
