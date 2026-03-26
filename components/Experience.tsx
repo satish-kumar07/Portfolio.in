@@ -1,5 +1,6 @@
 "use client";
-import React, { useRef } from "react";
+import React from "react";
+
 import { motion } from "framer-motion";
 import MagicBento, { MagicBentoCard } from "./MagicBento";
 
