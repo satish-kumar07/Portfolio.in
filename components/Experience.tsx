@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useRef, useCallback } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import React, { useRef } from "react";
+import { motion } from "framer-motion";
 import MagicBento, { MagicBentoCard } from "./MagicBento";
 
 
@@ -23,61 +23,6 @@ const experiences = [
   },
 ];
 
-/* ─── Spotlight Card ── */
-const SpotlightCard = ({ children, color }: { children: React.ReactNode; color: string }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const rotateX = useMotionValue(0);
-  const rotateY = useMotionValue(0);
-  const springX = useSpring(rotateX, { stiffness: 200, damping: 25 });
-  const springY = useSpring(rotateY, { stiffness: 200, damping: 25 });
-  const [hovered, setHovered] = useState(false);
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      if (!ref.current) return;
-      const rect = ref.current.getBoundingClientRect();
-      mouseX.set(e.clientX - rect.left);
-      mouseY.set(e.clientY - rect.top);
-      rotateX.set(((e.clientY - rect.top - rect.height / 2) / rect.height) * -5);
-      rotateY.set(((e.clientX - rect.left - rect.width / 2) / rect.width) * 5);
-    },
-    [mouseX, mouseY, rotateX, rotateY]
-  );
-
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); rotateX.set(0); rotateY.set(0); }}
-      style={{ rotateX: springX, rotateY: springY, transformPerspective: 800 }}
-      className="group relative"
-    >
-      {hovered && (
-        <motion.div
-          className="absolute -inset-[1px] rounded-2xl pointer-events-none z-0"
-          style={{ background: `radial-gradient(400px circle at ${mouseX.get()}px ${mouseY.get()}px, ${color}25, transparent 50%)` }}
-        />
-      )}
-      <div className="relative rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm overflow-hidden transition-all duration-500 group-hover:border-white/[0.12] group-hover:bg-white/[0.04] z-10">
-        {hovered && (
-          <motion.div
-            className="absolute pointer-events-none z-0"
-            style={{
-              width: 280, height: 280,
-              x: mouseX.get() - 140, y: mouseY.get() - 140,
-              background: `radial-gradient(circle, ${color}0d 0%, transparent 70%)`,
-              borderRadius: "50%",
-            }}
-          />
-        )}
-        {children}
-      </div>
-    </motion.div>
-  );
-};
 
 export default function Experience() {
   return (
