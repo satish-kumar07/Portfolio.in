@@ -49,7 +49,7 @@ export default function ResumePage() {
         >
           {/* Futuristic Border Glow */}
           <div className="absolute inset-0 border border-neon-cyan/20 pointer-events-none rounded-2xl" />
-          
+
           <iframe
             src="/resume.pdf#toolbar=0&navpanes=0&scrollbar=0"
             className="w-full h-full border-none"

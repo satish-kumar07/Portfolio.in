@@ -102,6 +102,8 @@ const SpotlightCard = ({ children, achievement, onClick }: { children: React.Rea
     rotateY.set(0);
   }, [rotateX, rotateY]);
 
+  const c = achievement.color;
+
   return (
     <motion.div
       ref={cardRef}
@@ -109,47 +111,73 @@ const SpotlightCard = ({ children, achievement, onClick }: { children: React.Rea
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      style={{
-        rotateX: springX,
-        rotateY: springY,
-        transformPerspective: 800,
-        transformStyle: "preserve-3d",
-      }}
+      style={{ rotateX: springX, rotateY: springY, transformPerspective: 900, transformStyle: "preserve-3d" }}
       className="h-full cursor-pointer group relative"
     >
-      {/* Cursor-following border glow */}
+      {/* ── Outer glow ring */}
       <motion.div
-        className="absolute -inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0"
-        style={{
-          background: isHovered
-            ? `radial-gradient(400px circle at ${mouseX.get()}px ${mouseY.get()}px, ${achievement.color}40, transparent 50%)`
-            : "none",
-        }}
+        className="absolute -inset-[1.5px] rounded-2xl pointer-events-none z-0"
+        animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ background: `radial-gradient(400px circle at ${mouseX.get()}px ${mouseY.get()}px, ${c}35, transparent 55%)` }}
       />
 
-      {/* Main Card */}
-      <div className="relative h-full rounded-2xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm overflow-hidden transition-all duration-500 group-hover:border-white/[0.12] group-hover:bg-white/[0.04] z-10">
-        
+      {/* ── Main Card */}
+      <div
+        className="relative h-full rounded-2xl backdrop-blur-sm overflow-hidden z-10 transition-all duration-400"
+        style={{
+          background: isHovered
+            ? `linear-gradient(135deg, ${c}08 0%, rgba(5,5,12,0.98) 50%, rgba(8,8,16,0.99) 100%)`
+            : "rgba(255,255,255,0.015)",
+          border: isHovered ? `1px solid ${c}30` : "1px solid rgba(255,255,255,0.06)",
+          boxShadow: isHovered ? `0 0 30px ${c}15, inset 0 1px 0 ${c}20` : "none",
+        }}
+      >
+        {/* Animated top accent bar */}
+        <motion.div
+          className="absolute top-0 left-0 right-0 h-[1.5px] pointer-events-none z-20"
+          style={{ background: `linear-gradient(90deg, transparent, ${c}, transparent)` }}
+          animate={isHovered ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0 }}
+          transition={{ duration: 0.4 }}
+        />
+
+        {/* Animated corner brackets */}
+        {(["tl", "tr", "bl", "br"] as const).map((pos) => {
+          const top = pos.startsWith("t");
+          const left = pos.endsWith("l");
+          return (
+            <motion.div
+              key={pos}
+              className="absolute pointer-events-none z-20 w-4 h-4"
+              style={{
+                top: top ? 8 : "auto", bottom: !top ? 8 : "auto",
+                left: left ? 8 : "auto", right: !left ? 8 : "auto",
+                borderTop: top ? `1.5px solid ${c}` : "none",
+                borderBottom: !top ? `1.5px solid ${c}` : "none",
+                borderLeft: left ? `1.5px solid ${c}` : "none",
+                borderRight: !left ? `1.5px solid ${c}` : "none",
+                borderRadius: top && left ? "4px 0 0 0" : top && !left ? "0 4px 0 0" : !top && left ? "0 0 0 4px" : "0 0 4px 0",
+              }}
+              animate={isHovered ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
+              transition={{ duration: 0.25, delay: 0.05 }}
+            />
+          );
+        })}
+
         {/* Inner cursor spotlight */}
-        {isHovered && (
-          <motion.div
-            className="absolute pointer-events-none z-0"
-            style={{
-              width: 250,
-              height: 250,
-              x: mouseX.get() - 125,
-              y: mouseY.get() - 125,
-              background: `radial-gradient(circle, ${achievement.color}12 0%, transparent 70%)`,
-              borderRadius: "50%",
-            }}
-          />
-        )}
+        <motion.div
+          className="absolute pointer-events-none z-0 rounded-full"
+          style={{ width: 260, height: 260, x: mouseX.get() - 130, y: mouseY.get() - 130, background: `radial-gradient(circle, ${c}10 0%, transparent 70%)` }}
+          animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        />
 
         {children}
       </div>
     </motion.div>
   );
 };
+
 
 /* ─── Animated Counter ── */
 const AnimatedCounter = ({ target }: { target: number }) => {

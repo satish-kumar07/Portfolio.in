@@ -1,7 +1,8 @@
 import React from "react";
 import Head from "next/head";
 import Navbar from "@/components/Navbar";
-import Background from "@/components/Background";
+import dynamic from "next/dynamic";
+const Background = dynamic(() => import("@/components/Background"), { ssr: false });
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import TechStack from "@/components/TechStack";

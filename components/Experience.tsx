@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useRef, useCallback } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import MagicBento, { MagicBentoCard } from "./MagicBento";
+
 
 const experiences = [
   {
@@ -97,9 +99,10 @@ export default function Experience() {
         </motion.div>
 
         {/* ─── Timeline ── */}
-        <div className="relative">
+        <MagicBento glowColor="0,240,255" enableSpotlight spotlightRadius={350} className="relative">
           {/* Vertical line */}
           <div className="absolute left-6 md:left-8 top-0 bottom-0 w-[1px] bg-gradient-to-b from-neon-cyan/40 via-neon-purple/20 to-transparent" />
+
 
           {experiences.map((exp, idx) => (
             <motion.div
@@ -119,7 +122,7 @@ export default function Experience() {
               />
 
               {/* Card */}
-              <SpotlightCard color={exp.color}>
+              <MagicBentoCard glowColor="0,240,255" enableTilt clickEffect enableStars className="rounded-2xl w-full">
                 <div className="relative z-10 p-6 md:p-8">
 
                   {/* Top row */}
@@ -190,10 +193,10 @@ export default function Experience() {
                     ))}
                   </div>
                 </div>
-              </SpotlightCard>
+              </MagicBentoCard>
             </motion.div>
           ))}
-        </div>
+        </MagicBento>
       </div>
     </section>
   );

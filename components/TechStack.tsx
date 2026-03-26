@@ -248,18 +248,36 @@ export default function TechStack() {
             </div>
 
             {/* Skill tiles grid */}
-            <div className="relative z-10">
+            <div className="relative z-10 w-full overflow-hidden">
+              <style>{`
+                @keyframes marquee {
+                  from { transform: translateX(0); }
+                  to { transform: translateX(-50%); }
+                }
+                .animate-marquee {
+                  animation: marquee 25s linear infinite;
+                }
+                .marquee-container:hover .animate-marquee {
+                  animation-play-state: paused;
+                }
+              `}</style>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
-                  className="flex overflow-x-auto gap-4 pb-4 px-2 snap-x scroll-smooth w-full [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                  className="marquee-container flex w-full relative [mask-image:linear-gradient(to_right,transparent,black_2%,black_98%,transparent)] md:[mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]"
                 >
-                  {activeCat.skills.map((skill, i) => (
-                    <SkillTile key={skill.name} skill={skill} index={i} />
-                  ))}
+                  <div className="flex animate-marquee w-max pb-4 pt-2">
+                    {[...Array(6)].map((_, rootIndex) => (
+                      <div key={rootIndex} className="flex gap-4 pr-4 w-max shrink-0">
+                        {activeCat.skills.map((skill, i) => (
+                          <SkillTile key={`${rootIndex}-${skill.name}-${i}`} skill={skill} index={i} />
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
