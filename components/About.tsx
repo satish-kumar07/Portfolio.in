@@ -8,7 +8,7 @@ const education = [
     degree: "B.Tech – Computer Science & Engineering (AI/ML)",
     institution: "Lovely Professional University",
     year: "2023 – Present",
-    score: "CGPA: 7.48",
+    score: "CGPA: 7.54",
     color: "neon-purple",
     hex: "#bf00ff"
   },
